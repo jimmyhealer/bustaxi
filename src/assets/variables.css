@@ -1,0 +1,13 @@
+:root {
+    --width: 500px;
+
+    --bg-color: rgb(255, 252, 245);
+
+    --dark-green: rgb(52, 126, 51);
+    --light-green: rgb(214, 239, 217);
+    --yellow: rgb(207, 150, 0);
+
+    --green-text: rgb(103, 158, 99);
+    --dark-green-text: rgb(48, 99, 45);
+    --gray-text: rgb(150, 150, 150);
+}
