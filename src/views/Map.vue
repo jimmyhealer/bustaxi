@@ -4,7 +4,7 @@ import { postReservation, type Reservations } from '@/api'
 import { useUserStore } from '@/stores/userStore'
 import { ElMessage } from 'element-plus'
 
-import SubmitButton from '../components/SubmitButton.vue'
+import SubmitButton from '@/components/SubmitButton.vue'
 
 const userStore = useUserStore()
 const data = reactive({
