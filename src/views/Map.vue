@@ -1,32 +1,53 @@
 <script setup lang="ts">
-import {ref, reactive} from "vue";
+import { ref, reactive } from 'vue'
+import { postReservation, type Reservations } from '@/api'
+import { useUserStore } from '@/stores/userStore'
+import { ElMessage } from 'element-plus'
 
-import SubmitButton from '../components/SubmitButton.vue';
+import SubmitButton from '../components/SubmitButton.vue'
 
+const userStore = useUserStore()
 const data = reactive({
-  date: null,
-  time: null,
-  departure: null,
-  destination: null,
+  date: new Date(),
+  time: new Date(),
+  departure: '台北車站',
+  destination: '中正紀念堂',
   people: 1,
-});
+})
 
-const stops = ref([
-  'A', 'B', 'C', 'D', 'E'
-]);
+const stops = ref(['台北車站', '政大校門', '中正紀念堂'])
 
 const estimation = ref({
   total: 10,
   saving: 5,
-});
+})
 
+const submitHandler = async () => {
+  const reservationDateTime = new Date(
+    data.date.setHours(data.time.getHours(), data.time.getMinutes()),
+  )
+  console.log(reservationDateTime)
+
+  const reservation: Reservations = {
+    email: userStore.userProfile!.email,
+    origin: data.departure,
+    destination: data.destination,
+    date: reservationDateTime.toISOString(),
+    headcount: data.people,
+  }
+
+  try {
+    await postReservation(reservation)
+    ElMessage.success('預約成功')
+  } catch {
+    ElMessage.error('預約失敗')
+  }
+}
 </script>
 
 <template>
   <div class="input">
-    <div class="input-title">
-      搭乘日期
-    </div>
+    <div class="input-title">搭乘日期</div>
     <div class="input-value">
       <el-date-picker
         v-model="data.date"
@@ -40,9 +61,7 @@ const estimation = ref({
     </div>
   </div>
   <div class="input">
-    <div class="input-title">
-      搭乘時間
-    </div>
+    <div class="input-title">搭乘時間</div>
     <div class="input-value">
       <el-time-picker
         v-model="data.time"
@@ -53,12 +72,10 @@ const estimation = ref({
     </div>
   </div>
 
-  <hr>
+  <hr />
 
   <div class="input">
-    <div class="input-title">
-      出發地
-    </div>
+    <div class="input-title">出發地</div>
     <div class="input-value">
       <el-select
         v-model="data.departure"
@@ -66,20 +83,13 @@ const estimation = ref({
         size="large"
         style="min-width: 180px; max-width: 240px; width: 50vw"
       >
-        <el-option
-          v-for="item in stops"
-          :key="item"
-          :label="item"
-          :value="item"
-        />
+        <el-option v-for="item in stops" :key="item" :label="item" :value="item" />
       </el-select>
     </div>
   </div>
 
   <div class="input">
-    <div class="input-title">
-      目的地
-    </div>
+    <div class="input-title">目的地</div>
     <div class="input-value">
       <el-select
         v-model="data.destination"
@@ -87,40 +97,40 @@ const estimation = ref({
         size="large"
         style="min-width: 180px; max-width: 240px; width: 50vw"
       >
-        <el-option
-          v-for="item in stops"
-          :key="item"
-          :label="item"
-          :value="item"
-        />
+        <el-option v-for="item in stops" :key="item" :label="item" :value="item" />
       </el-select>
     </div>
   </div>
 
-  <hr>
+  <hr />
 
   <div class="input">
-    <div class="input-title">
-      乘車人數
-    </div>
+    <div class="input-title">乘車人數</div>
     <div class="input-value">
       <el-input-number
         v-model="data.people"
         :min="1"
         :max="99"
         size="large"
-        style="min-width: 180px; max-width: 240px; width: 50vw" />
+        style="min-width: 180px; max-width: 240px; width: 50vw"
+      />
     </div>
   </div>
 
-  <hr>
+  <hr />
 
   <div class="estimation">
-    <div>預估乘車時間：<span class="digit">{{ estimation.total }}</span>分鐘</div>
-    <div>預估節省時間：<span class="digit">{{ estimation.saving }}</span>分鐘</div>
+    <div>
+      預估乘車時間：<span class="digit">{{ estimation.total }}</span
+      >分鐘
+    </div>
+    <div>
+      預估節省時間：<span class="digit">{{ estimation.saving }}</span
+      >分鐘
+    </div>
   </div>
 
-  <SubmitButton />
+  <SubmitButton @submit="submitHandler" />
 </template>
 
 <style scoped>

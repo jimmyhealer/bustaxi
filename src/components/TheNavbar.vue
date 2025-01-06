@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import {computed} from "vue";
-import {useRoute} from "vue-router";
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 
-const route = useRoute();
-const title = computed(() => route.meta.title);
+import { useUserStore } from '@/stores/userStore'
 
+const userStore = useUserStore()
+const { signInWithGoogle, signOut } = userStore
+
+const route = useRoute()
+const title = computed(() => route.meta.title)
 </script>
 
 <template>
@@ -22,12 +26,12 @@ const title = computed(() => route.meta.title);
     </template>
     <template v-else>
       <h1 class="title">公車<span>計程車</span></h1>
-      <RouterLink class="login" to="/login">
+      <div class="login" @click="userStore.isAuthenticated ? signOut() : signInWithGoogle()">
         <el-icon size="36" color="#ffffff">
           <User />
         </el-icon>
-        <span>登入</span>
-      </RouterLink>
+        <span>{{ userStore.isAuthenticated ? '登出' : '登入' }}</span>
+      </div>
     </template>
   </nav>
 </template>
@@ -63,6 +67,7 @@ nav .login {
   display: flex;
   align-items: center;
   text-decoration: none;
+  cursor: pointer;
 }
 
 nav .login el-icon {
@@ -72,8 +77,8 @@ nav .login el-icon {
 nav .login span {
   font-size: 35px;
   color: #ffffff;
-  text-decoration: underline;
-  text-underline-offset: 5px;
+  /* text-decoration: underline; */
+  /* text-underline-offset: 5px; */
 }
 
 nav el-icon.back {

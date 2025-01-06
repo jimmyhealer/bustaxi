@@ -1,23 +1,24 @@
 <script setup lang="ts">
-import {ref, reactive} from 'vue';
-import {useRouter} from "vue-router";
+import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
 
-const router = useRouter();
+const router = useRouter()
 
-const station = ref('捷運府中站');
+const station = ref('捷運府中站')
 const suggestions = reactive([
   {
     location: '南門街',
-    estimation: '220m(步行3分鐘)'
-  }, {
+    estimation: '220m(步行3分鐘)',
+  },
+  {
     location: '悅喜商務飯店',
-    estimation: '210m(步行3分鐘)'
-  }, {
+    estimation: '210m(步行3分鐘)',
+  },
+  {
     location: '後站商圈',
-    estimation: '400m(步行7分鐘)'
+    estimation: '400m(步行7分鐘)',
   },
 ])
-
 </script>
 
 <template>
@@ -31,20 +32,16 @@ const suggestions = reactive([
       <el-icon size="50" color="var(--green-text)">
         <Van />
       </el-icon>
-      <span>
-      立即搭乘
-      </span>
+      <span> 立即搭乘 </span>
     </div>
     <div class="item" @click="router.push('/map')">
       <el-icon size="50" color="var(--green-text)">
         <Clock />
       </el-icon>
-      <span>
-      預約搭乘
-      </span>
+      <span> 預約搭乘 </span>
     </div>
   </div>
-  <hr>
+  <hr />
   <div class="suggestion">
     <h2>
       <el-icon size="40">
@@ -54,7 +51,7 @@ const suggestions = reactive([
     </h2>
 
     <ul>
-      <li v-for="suggestion in suggestions">
+      <li v-for="suggestion in suggestions" :key="suggestion.location">
         <span>{{ suggestion.location }}</span>
         <span>{{ suggestion.estimation }}</span>
       </li>
@@ -158,6 +155,4 @@ hr {
 .suggestion ul li.more {
   color: var(--gray-text);
 }
-
-
 </style>

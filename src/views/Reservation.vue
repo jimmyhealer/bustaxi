@@ -1,50 +1,37 @@
 <script setup lang="ts">
-import {reactive} from "vue";
+import { ref, onMounted } from 'vue'
+import { getReservations, type Reservations } from '@/api'
+import { useUserStore } from '@/stores/userStore'
 
-const reservations = reactive([
-  {
-    time: '2024/07/08, 15:30',
-    on: '捷運府中站',
-    off: '溫泉旅店',
-    people: 1,
-    model: '7人座',
-    plate: 'ABC-1234',
-    saving: 15,
-    amount: 50,
-  }, {
-    time: '2024/07/08, 15:30',
-    on: '捷運府中站',
-    off: '溫泉旅店',
-    people: 1,
-    model: '7人座',
-    plate: 'ABC-1234',
-    saving: 15,
-    amount: 50,
-  },
-]);
+const userStore = useUserStore()
+const reservations = ref<Reservations[]>([])
+
+const prettyDate = (date: string) => {
+  const d = new Date(date)
+  return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()} ${d.getHours()}:${d.getMinutes()}`
+}
+
+onMounted(async () => {
+  reservations.value = await getReservations(userStore.userProfile!.email)
+})
 </script>
 
 <template>
-  <div v-for="item in reservations">
-    <p>搭乘時間：{{ item.time }}</p>
-    <p>上車地點：{{ item.on }}</p>
-    <p>下車地點：{{ item.off }}</p>
-    <p>搭乘人數：{{ item.people }}</p>
-    <p>搭乘車種：{{ item.model }}</p>
-    <p>車牌號碼：{{ item.plate }}</p>
-    <p>節省時間：{{ item.saving }}</p>
-    <p>搭乘金額：{{ item.amount }}</p>
-    <hr>
+  <div v-for="item in reservations" :key="item.date">
+    <p>搭乘時間：{{ prettyDate(item.date) }}</p>
+    <p>上車地點：{{ item.origin }}</p>
+    <p>下車地點：{{ item.destination }}</p>
+    <p>搭乘人數：{{ item.headcount }}</p>
+    <p>搭乘金額：{{ item.fee }}</p>
+    <p>節省碳排放：{{ item.carbonEmmision }}</p>
+    <hr />
   </div>
-
 </template>
 
 <style scoped>
-
 p {
   color: #000000;
   font-size: 18px;
-
 }
 
 hr {
